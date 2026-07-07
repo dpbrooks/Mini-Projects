@@ -1,0 +1,126 @@
+/*
+    This file was made to practice and get a feel for Prolog
+    Covers standard commands, looping, overloading commands,
+    lists, if-else statements, reading input and writing  output
+*/
+
+% Prints "Hello World!"
+hello :-
+    writeln('Hello World!'),
+    fail.
+
+main :-
+    hello().
+
+% Writes Hello followed by the number of the iteration four times
+hellorepeat :-
+    between(1,4,X),
+    format('Hello ~d\n', [X]),
+    fail.
+
+% Repeats the statement for every user input except 'no'
+userhello :-
+    repeat,
+    writeln("hello, type anything to repeat or 'no' to stop."),
+    read(Ans),
+    Ans == no -> fail.
+
+% Overload max_element func. if X > Y first func is run else second is run
+max_element(X,Y,X) :- X > Y.
+max_element(X,Y,Y) :- X =< Y.
+
+/*
+    Returns the length of a given list
+    Uses recursion to increment the length until
+    listlength is passed an empty list
+*/
+listlength([], 0).
+listlength([_ | L], N) :-
+    listlength(L, N1),
+    N is N1 + 1.
+
+% Prints the contents of the given list
+listaccess([]).
+listaccess([Head | Tail]) :-
+    writeln(Head),
+    listaccess(Tail).
+
+% Prints the factorial of the given number
+factorial(X, 1) :- X < 2.
+factorial(X, Y) :-
+    X2 is X - 1,
+    factorial(X2,Ans),
+    Y is Ans*X.
+
+% Prints the max value between X and Y
+maxvalue(X,Y) :-
+    X > Y ->
+    write(X)
+    ;
+    write(Y).
+
+% Prints true if the given number is even, false otherwise
+iseven(X) :-
+    Y is X mod 2,
+    (Y = 0) ->
+    write("true")
+    ;
+    write("false").
+
+% Increments the given number by 1 and prints the new number
+incr(X) :-
+    Y is X + 1,
+    write(Y).
+
+% Takes in user input and then prints it
+read_and_print :-
+    writeln(Please provide your input:),
+    read(Input),
+    writeln(Input).
+
+% Finds the max value between two numbers
+max_value(X,Y,Max) :- 
+    X > Y, 
+    Max = X,
+    !.
+max_value(X,Y,Max) :-
+    Max = Y.
+
+/*
+    Shows the difference between '=' and 'is'
+    '=' is taken literally and makes X '3 + 2'
+    'is' carries out the operation and makes Y '5'
+*/
+example1 :-
+    X = 3 + 2,
+    Y is 3 + 2,
+    writeln(X),
+    writeln(Y).
+
+% Creates a list and tests concatenation, and printing
+listtest :-
+    Lst = [1, b, "hello"],
+    Lst2 = [a | Lst],
+    writeln(Lst2),
+    [E1, E2, E3] = Lst,
+    write(E1), write(" "), write(E2), write(" "),  write(E3).
+
+/*
+    Function depends on which param(s) is left as a variable
+    - conc(List1, List2, Var) results in concatenating List1 and List2
+    - conc(Var1, Var2, List) results in finding every way to split List
+        Var1 being the part before the split and Var2 being the part after
+        (Use ';' to get past the first split when getting results)
+    - conc(Var, List1, List2) results in checking if List 2 ends with List1
+        and sets Var equal to what comes before it
+        (Ex. conc(Before, [c], [a, b, c]) checks if [a, b, c] ends in [c]
+        and sets Before = [a, b])
+*/
+conc([], L2, L2).
+conc([X | L1], L2, [X | L3]) :- conc(L1, L2, L3).
+
+% Another example of a between loop, prints 1234
+printnum :-
+    between(1,4,X),
+    write(X),
+    fail.

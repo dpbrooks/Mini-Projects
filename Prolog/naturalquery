@@ -1,0 +1,124 @@
+% Create a more natural and conversational way to query relationships in Prolog
+
+% Outline Relationships
+adult(phil).
+adult(claire).
+adult(cam).
+adult(mitchell).
+adult(gloria).
+adult(jay).
+child(haley).
+child(alex).
+child(luke).
+child(manny).
+child(lily).
+baby(joe).
+husband(phil,claire).
+husband(jay,gloria).
+husband(mitchell,cam).
+husband(cam,mitchell).
+wife(gloria,jay).
+wife(claire,phil).
+spouse(mitchell,cam).
+father(phil,haley).
+father(phil,alex).
+father(phil,luke).
+father(mitchell,lily).
+father(cam,lily).
+father(jay,claire).
+father(jay,mitchell).
+father(jay,manny).
+father(jay,joe).
+mother(claire,haley).
+mother(claire,alex).
+mother(claire,luke).
+mother(gloria,manny).
+mother(gloria,joe).
+brother(luke,haley).
+brother(luke,alex).
+brother(manny,joe).
+sister(haley,luke).
+sister(haley,alex).
+sister(alex,luke).
+
+married(X,Y) :-
+   husband(X,Y),
+   wife(Y,X);
+   husband(Y,X),
+   wife(X,Y);
+   husband(X,Y),
+   husband(Y,X).
+
+% Get results of queries
+adult(P1, Response) :-
+    Val = adult(P1),
+    Val -> (write("Yes, "), write(P1), write(" is an adult."), Response = "");
+           (write("No, "), write(P1), write(" is not an adult."), Response = "").
+child(P1, Response) :-
+    Val = child(P1),
+    Val -> Response = "Yes, they are an child";
+           Response = "No, they are not an child".
+baby(P1, Response) :-
+    Val = baby(P1),
+    Val -> Response = "Yes, they are an baby";
+           Response = "No, they are not an baby".
+father(P1, P2, Response) :-
+    Val = father(P1, P2),
+    Val -> Response = "Yes, he is their father.";
+           Response = "No, he is not their father.".
+mother(P1, P2, Response) :-
+    Val - mother(P1, P2),
+    Val -> (write("Yes, "), write(P1), write(" is "), write(P2), write('\'s mother'), Response = ""); % Find out how to use a single quote to make the second person possesive
+           (write("False"), Response = "").
+
+married(P1, P2, Response) :-
+    Val = married(P1, P2),
+    Val -> Response = "Yes, they are married.";
+           Response = "No, they are not married.".
+
+% Determine the type of query being asked
+determinequery([is, X, an, Z, ?], Response) :-
+    (Z = adult) -> (adult(X, Res), Response = Res), !;
+    Response = "Relationship not in data set.", !.
+
+determinequery([is, X, a, Z, ?], Response) :-
+    (Z = child) -> (child(X, Res), Response = Res), !;
+    (Z = baby) -> (baby(X, Res), Response = Res), !;
+    Response = "Relationship not in data set.", !.
+
+determinequery([is, X, the, Z, of, Y, ?], Response) :-
+    (Z = father) -> (father(X, Y, Res), Response = Res), !;
+    (Z = mother) -> (mother(X, Y, Res), Response = Res), !;
+    Response = "Relationship not in data set.", !.
+
+determinequery([are, X, and, Y, Z, ?], Response) :-
+    (Z = married) -> (married(X, Y, Res), Response = Res), !.
+
+determinequery(Ans, Response) :-
+    Ans = [quit],
+    Response = "Leaving Conversation.",
+    !.
+
+determinequery([_], Response) :-
+    Response = "Invalid input".
+
+query :-
+    writeln("Hello!"),
+    writeln("Query Formats:"),
+    writeln("1. is p1 a/an <blank>?"),
+    writeln("2. is p1 the <blank> of p2"),
+    writeln("3. are p1 and p2 <blank>?"),
+    repeat,
+        write("What is your query? -> "),
+        readln(Ans),
+        determinequery(Ans, Response), % Can probably remove the response variable and just print output in called functions
+        writeln(Response),
+        nl,
+        Ans == [quit] -> !.
+
+% How to pattern match out a list (Can be used to merge calc and chatbot)
+test(Lst) :-
+    [X, Y, Z] = Lst,
+    writeln(X),
+    writeln(Y),
+    writeln(Z).

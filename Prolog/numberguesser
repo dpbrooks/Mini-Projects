@@ -1,0 +1,38 @@
+% Generates a random secret number and passes it into the game loop
+play_game :-
+  random(1, 11, Secret),
+  game_loop(Secret).
+
+% Game loop that takes in the secret number and prompts the player for a guess
+game_loop(Secret) :-
+  repeat,
+  write('Guess a number between 1 and 10: '),
+  read(Guess),
+  respond_to_guess(Guess, Secret),
+  (Guess == Secret -> true ; game_loop(Secret)).
+
+% Respond to the user's guess
+respond_to_guess(Guess, Secret) :-
+  correct_guess(Guess, Secret) ;
+  too_high(Guess, Secret) ;
+  too_low(Guess, Secret).
+
+% Check if the guess is correct
+correct_guess(Guess, Secret) :-
+  Guess == Secret,
+  write('You win! The secret number is '), writeln(Secret).
+
+% Check if the guess is too high
+too_high(Guess, Secret) :-
+  Guess > Secret,
+  writeln('Your guess is too high. Try again!').
+
+% Check if the guess is too low
+too_low(Guess, Secret) :-
+  Guess < Secret,
+  writeln('Your guess is too low. Try again!').
+
+% End the program with a goodbye message
+bye :-
+  writeln('Thanks for playing!'),
+  halt.
